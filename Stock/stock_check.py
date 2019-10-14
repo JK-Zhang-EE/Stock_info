@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import Select
 
 
 content = input("請輸入想要查訊的股票型號:")
-number = int(content)
+number = str(content)
 
 # Open Webdriver
 driver = webdriver.Chrome('../Stock/chromedriver')
@@ -76,11 +76,11 @@ def calculate_data(data):
     people_less = int(people_less1) + int(people_less2) + int(people_less3)
     people_more = int(people_all) - people_less
 
-    volume_less1 = int(data[7].loc[11].replace(',',''))
-    volume_less2 = int(data[7].loc[12].replace(',',''))
-    volume_less3 = int(data[7].loc[13].replace(',',''))
+    volume_less1 = (0.001)*int(data[7].loc[11].replace(',',''))
+    volume_less2 = (0.001)*int(data[7].loc[12].replace(',',''))
+    volume_less3 = (0.001)*int(data[7].loc[13].replace(',',''))
     volume_less4 = int(volume_less1) + int(volume_less2)
-    volume_all = int(data[7].loc[26].replace(',',''))
+    volume_all = (0.001)*int(data[7].loc[26].replace(',',''))
     volume_less = int(volume_less1) + int(volume_less2) + int(volume_less3)
     volume_more = int(volume_all) - volume_less
 
@@ -99,8 +99,8 @@ def calculate_data(data):
     #volume = [volume_less,volume_more,volume_all]
     #volume_per = [volume_per_less,volume_per_more,volume_per_all]    
     #result = [people_less,people_more,people_all,volume_less,volume_more,volume_all,volume_per_less,volume_per_more]
-    result_simple1 = [people_less1,people_less2,people_less3,people_less4]
-    result_volume = [volume_less1,volume_less2,volume_less3,volume_less4]
+    result_simple1 = [people_less1,people_less2,people_less3,people_less4,people_less]
+    result_volume = [volume_less1,volume_less2,volume_less3,volume_less4,volume_less]
     result_rich = [people_more,volume_more]
 
     return result_simple1,result_volume,result_rich
@@ -114,10 +114,12 @@ p1 = []
 p2 = []
 p3 = []
 p4 = []
+p5 = []
 v1 = []
 v2 = []
 v3 = []
 v4 = []
+v5 = []
 r1 = []
 r2 = []
 date = []
@@ -134,14 +136,15 @@ for i in stock_dates:
     p2.append(result_simple1[1])
     p3.append(result_simple1[2])
     p4.append(result_simple1[3])
-
+    p5.append(result_simple1[4])
 
     # volume of retail
     v1.append(result_volume[0])
     v2.append(result_volume[1])
     v3.append(result_volume[2])
     v4.append(result_volume[3])    
-    
+    v5.append(result_volume[4])    
+
     # people of rich
     r1.append(result_rich[0])
     # volume of rich
@@ -157,10 +160,12 @@ p1.reverse()
 p2.reverse()
 p3.reverse()
 p4.reverse()
+p5.reverse()
 v1.reverse()
 v2.reverse()
 v3.reverse()
 v4.reverse()
+v5.reverse()
 
 date.reverse()
 ## show people of stock components
@@ -173,6 +178,13 @@ plt.xticks(x, date)
 plt.xlabel("DATE")
 plt.title(' Retail player of No. ' + str(number))
 plt.legend(loc=[1,0])
+plt.grid(axis='y')
+for a,b in zip(x,p1):
+    plt.text(a+0.3, b, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+for a,b,c in zip(x,p2,p4):
+    plt.text(a+0.3, c, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+for a,b,c in zip(x,p3,p5):
+    plt.text(a+0.3, c, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
 plt.show()
 
 
@@ -181,11 +193,18 @@ x = range(len(date))
 rects1 = plt.bar(x, height=v1, width=0.5, color='red', label=axis_y2[0])
 rects2 = plt.bar(x, height=v2, width=0.5, color='green', label=axis_y2[1],bottom=v1)
 rects3 = plt.bar(x, height=v3, width=0.5, color='blue', label=axis_y2[2],bottom=v4)
-plt.ylabel("Volume")
+plt.ylabel("Volume(lot)")
 plt.xticks(x, date)
 plt.xlabel("DATE")
 plt.title(' Retail volume of No. ' + str(number))
 plt.legend(loc=[1,0])
+for a,b in zip(x,v1):
+    plt.text(a+0.3, b, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+for a,b,c in zip(x,v2,v4):
+    plt.text(a+0.3, c, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+for a,b,c in zip(x,v3,v5):
+    plt.text(a+0.3, c, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+plt.grid(axis='y')
 plt.show()
 
 
@@ -197,14 +216,20 @@ plt.xticks(x, date)
 plt.xlabel("DATE")
 plt.title(' Rich people of No. ' + str(number))
 plt.legend(loc=[1,0])
+for a,b in zip(x,r1):
+    plt.text(a+0.3, b, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+plt.grid(axis='y')
 plt.show()
 
 ## show rich_volume of stock components
 x = range(len(date))
 rects1 = plt.bar(x, height=r2, width=0.5, color='red', label="More than 10")
-plt.ylabel("Volume")
+plt.ylabel("Volume(lot)")
 plt.xticks(x, date)
 plt.xlabel("DATE")
 plt.title(' Rich volume of No. ' + str(number))
 plt.legend(loc=[1,0])
+for a,b in zip(x,r2):
+    plt.text(a+0.3, b, '%.0f' % b, ha='center', va= 'bottom',fontsize=8)
+plt.grid(axis='y')
 plt.show()
